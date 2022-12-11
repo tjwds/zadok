@@ -2,6 +2,8 @@ import { instance } from "../instance.js";
 import { Response } from "../response/Response.js";
 
 const Command = class {
+  // TODO add help text for command
+
   constructor(name) {
     this.name = name;
 
