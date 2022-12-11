@@ -29,8 +29,8 @@ const Instance = class {
     this.say("Hi there.");
   }
 
-  say(text) {
-    console.log(`🌳 ${text}`);
+  say(text, prefix = "🌳") {
+    console.log(`${prefix} ${text}`);
   }
 };
 

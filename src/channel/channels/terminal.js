@@ -2,6 +2,7 @@ import { createInterface } from "node:readline/promises";
 import { stdin as input, stdout as output } from "node:process";
 
 import { Channel } from "../Channel.js";
+import { SUCCESS, WARNING } from "../../response/Response.js";
 
 const Terminal = class Terminal extends Channel {
   constructor() {
@@ -17,7 +18,14 @@ const Terminal = class Terminal extends Channel {
   }
 
   executeOutput(response) {
-    this.instance.say(response.text);
+    this.instance.say(
+      response.text,
+      response.type === SUCCESS
+        ? "🌳"
+        : response.type === WARNING
+        ? "🍂"
+        : /* ERROR */ "🔥"
+    );
   }
 };
 
