@@ -13,8 +13,13 @@ const Command = class {
   }
 
   input(input) {
+    const { commandName } = input;
+    if (commandName === "crash") {
+      throw new Error("Wow, rude.");
+    }
+
     return this.responseFromText(
-      input.commandName === "ping" ? "pong" : "Sorry, I didn't catch that."
+      commandName === "ping" ? "pong" : "Sorry, I didn't catch that."
     );
   }
 

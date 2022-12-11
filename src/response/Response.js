@@ -3,9 +3,9 @@ const WARNING = Symbol();
 const ERROR = Symbol();
 
 const Response = class {
-  constructor(text = "") {
+  constructor(text = "", type = SUCCESS) {
     this.text = text;
-    this.type = SUCCESS;
+    this.type = type;
   }
 
   isSuccess() {
