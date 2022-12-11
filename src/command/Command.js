@@ -13,13 +13,17 @@ const Command = class {
   }
 
   input(input) {
-    return new Response(
+    return this.responseFromText(
       input.commandName === "ping" ? "pong" : "Sorry, I didn't catch that."
     );
   }
 
   shouldRegister() {
     return true;
+  }
+
+  responseFromText(text = "") {
+    return new Response(text);
   }
 };
 

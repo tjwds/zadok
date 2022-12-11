@@ -5,6 +5,10 @@ const Input = class {
     this.commandName = commandName;
     this.channel = channel;
   }
+
+  textWithoutCommandName() {
+    return this.words.slice(1).join(" ");
+  }
 };
 
 export { Input };

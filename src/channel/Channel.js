@@ -23,8 +23,7 @@ const Channel = class {
 
   parseInput(fullMessage = "") {
     const words = fullMessage.split(" ");
-    // TODO turn this into a class
-    return this.actionInput(
+    this.actionInput(
       new Input({
         fullMessage,
         words,
@@ -36,7 +35,7 @@ const Channel = class {
     );
   }
 
-  actionInput(input) {
+  async actionInput(input) {
     const { commandName } = input;
     const { instance } = this;
     const { commands } = instance;
@@ -44,10 +43,10 @@ const Channel = class {
     const command = commands[commandName];
     let response;
     if (command) {
-      response = command.input(input);
+      response = await command.input(input);
     }
     if (!response) {
-      response = commands.default.input(input);
+      response = await commands.default.input(input);
     }
 
     this.executeOutput(response);
