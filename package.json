@@ -1,0 +1,19 @@
+{
+  "name": "zadok",
+  "version": "0.0.1",
+  "type": "module",
+  "description": "automating the boring stuff with an annoying robot",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "fix": "eslint --fix src/**/*.js index.js && prettier --write src/**/*.js index.js"
+  },
+  "author": "Joe Woods <code@joewoods.dev>",
+  "license": "MIT",
+  "devDependencies": {
+    "eslint": "^8.29.0",
+    "eslint-config-airbnb-base": "^15.0.0",
+    "eslint-plugin-import": "^2.26.0",
+    "prettier": "2.8.1"
+  }
+}
