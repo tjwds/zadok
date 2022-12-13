@@ -1,3 +1,5 @@
+import { Source } from "./source/Source.js";
+
 const Instance = class {
   constructor() {
     this.channels = new Map();
@@ -5,7 +7,7 @@ const Instance = class {
 
     this.commands = {};
 
-    // TODO database / source
+    this.source = new Source();
   }
 
   registerChannel(channel) {
