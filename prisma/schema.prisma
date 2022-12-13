@@ -18,3 +18,18 @@ model Task {
   title String
   done  Boolean @default(false)
 }
+
+model Habit {
+  id         Int             @id @default(autoincrement())
+  title      String
+  // TODO assuming, for now, that every habit is daily
+  // TODO toggle habits as active / inactive
+  logEntries HabitLogEntry[]
+}
+
+model HabitLogEntry {
+  id      Int      @id @default(autoincrement())
+  time    DateTime @default(now())
+  habit   Habit    @relation(fields: [habitId], references: [id])
+  habitId Int
+}

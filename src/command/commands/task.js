@@ -1,16 +1,6 @@
 import { Command } from "../Command.js";
 import { Response, WARNING } from "../../response/Response.js";
-
-const doneWords = [
-  "done",
-  "finish",
-  "finished",
-  "complete",
-  "completed",
-  "close",
-];
-const undoneWords = ["reopen"];
-const statusWords = [...doneWords, ...undoneWords];
+import { doneWords, undoneWords, statusWords } from '../statusWords.js';
 
 class TaskCommand extends Command {
   constructor() {
