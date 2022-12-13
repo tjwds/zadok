@@ -16,6 +16,7 @@ datasource db {
 model Task {
   id    Int     @id @default(autoincrement())
   title String
+  // TODO do I care about creation / close dateTimes? probably not…
   done  Boolean @default(false)
 }
 
