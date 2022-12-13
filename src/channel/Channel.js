@@ -49,7 +49,9 @@ const Channel = class {
       response = await commands.default.input(input);
     }
 
-    this.executeOutput(response);
+    if (!response.intentionallyEmpty) {
+      this.executeOutput(response);
+    }
   }
 
   executeOutput(response) {

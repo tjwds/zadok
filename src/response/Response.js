@@ -6,6 +6,7 @@ const Response = class {
   constructor(text = "", type = SUCCESS) {
     this.text = text;
     this.type = type;
+    this.intentionallyEmpty = false;
   }
 
   isSuccess() {

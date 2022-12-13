@@ -30,6 +30,10 @@ const Command = class {
   responseFromText(text = "") {
     return new Response(text);
   }
+
+  emptyResponse() {
+    return new Response();
+  }
 };
 
 export { Command };
