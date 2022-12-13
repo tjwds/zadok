@@ -27,6 +27,12 @@ const Terminal = class Terminal extends Channel {
         : /* ERROR */ "🔥"
     );
   }
+
+  clear() {
+    for (let i = 0; i < 100; i++) {
+      console.log();
+    }
+  }
 };
 
 const terminal = new Terminal();

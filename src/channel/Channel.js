@@ -57,6 +57,10 @@ const Channel = class {
   executeOutput(response) {
     throw new Error("Unimplemented.", { response });
   }
+
+  clear() {
+    throw new Error("I don't know how to clear this channel, sorry.");
+  }
 };
 
 export { Channel };
