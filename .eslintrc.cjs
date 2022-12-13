@@ -1,6 +1,6 @@
 module.exports = {
   env: {
-    es2021: true,
+    esnext: true,
     node: true,
   },
   parserOptions: {
