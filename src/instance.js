@@ -24,8 +24,6 @@ const Instance = class {
     const { name } = command;
     this.commands[name] = command;
     command.instance = this;
-
-    this.say("Registered command " + name);
   }
 
   sayHi() {
