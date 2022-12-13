@@ -34,3 +34,10 @@ model HabitLogEntry {
   habit   Habit    @relation(fields: [habitId], references: [id])
   habitId Int
 }
+
+model Goal {
+  id    Int      @id @default(autoincrement())
+  time  DateTime @default(now())
+  title String
+  done  Boolean @default(false)
+}

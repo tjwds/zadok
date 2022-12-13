@@ -8,6 +8,7 @@ class ThingsTodoCommand extends Command {
   }
 
   async input(input) {
+    input.channel.parseInput("goal");
     ["task", "habit"].forEach((todoType) => {
       input.channel.parseInput(`${todoType} list`);
     });
