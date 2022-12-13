@@ -4,3 +4,6 @@ config.js
 food.json
 
 node_modules
+
+zadok.db
+zadok.db-journal

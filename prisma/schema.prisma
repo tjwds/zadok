@@ -10,3 +10,11 @@ datasource db {
   provider = "sqlite"
   url      = "file:./zadok.db"
 }
+
+// TODO for now, assume single-user
+
+model Task {
+  id    Int     @id @default(autoincrement())
+  title String
+  done  Boolean @default(false)
+}

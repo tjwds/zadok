@@ -23,6 +23,7 @@ const Instance = class {
   registerCommand(command) {
     const { name } = command;
     this.commands[name] = command;
+    command.instance = this;
 
     this.say("Registered command " + name);
   }
