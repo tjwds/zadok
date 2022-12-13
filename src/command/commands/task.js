@@ -29,11 +29,13 @@ class TaskCommand extends TodoCommand {
   }
 
   async findAll(done) {
-    return await this.instance.source.prisma.task.findMany({
-      where: {
-        done,
-      },
-    });
+    return (
+      await this.instance.source.prisma.task.findMany({
+        where: {
+          done,
+        },
+      })
+    ).sort((a, b) => a.title.localeCompare(b.title));
   }
 
   async isDone(todo) {
