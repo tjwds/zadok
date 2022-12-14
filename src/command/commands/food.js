@@ -54,6 +54,7 @@ class FoodCommand extends Command {
   }
 
   async input(input) {
+    const { words } = input;
     const text = input.textWithoutCommandName();
     if (["genre", "genres", "cuisine", "cuisines"].includes(text)) {
       const cuisines = new Set();
@@ -85,7 +86,11 @@ class FoodCommand extends Command {
     });
     foodArr.sort((a, b) => a.geometry.distance - b.geometry.distance);
 
-    for (let i = 0; i < 10; i++) {
+    const number = Number(
+      words.find((word) => !Number.isNaN(Number(word))) || 10
+    );
+
+    for (let i = 0; i < number; i++) {
       response.push(`${i + 1}. ${locationToLine(foodArr[i])}`);
     }
 
