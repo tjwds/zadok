@@ -13,7 +13,7 @@ const Terminal = class Terminal extends Channel {
     const readlineInstance = createInterface({ input, output });
 
     readlineInstance.on("line", (line) => {
-      this.parseInput(line);
+      this.parseInput(line.trim());
     });
   }
 
