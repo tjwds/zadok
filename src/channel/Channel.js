@@ -11,8 +11,8 @@ const Channel = class {
     this.initialize();
   }
 
-  initialize() {
-    instance.registerChannel(this);
+  async initialize() {
+    await instance.registerChannel(this);
     this.ready = true;
   }
 
@@ -21,7 +21,7 @@ const Channel = class {
     throw new Error("Unimplemented.");
   }
 
-  parseInput(fullMessage = "") {
+  parseInput(fullMessage = "", extra) {
     const words = fullMessage.split(" ");
     this.actionInput(
       new Input({
@@ -31,6 +31,9 @@ const Channel = class {
         commandName: words[0].toLocaleLowerCase(),
 
         channel: this,
+
+        // For passing through the raw event, if needed (see Discord)
+        extra,
       })
     );
   }
@@ -48,6 +51,7 @@ const Channel = class {
     if (!response) {
       response = await commands.default.input(input);
     }
+    response.extra = input.extra;
 
     if (!response.intentionallyEmpty) {
       this.executeOutput(response);

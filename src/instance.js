@@ -10,11 +10,11 @@ const Instance = class {
     this.source = new Source();
   }
 
-  registerChannel(channel) {
+  async registerChannel(channel) {
     this.channels.set(this.nextChannelId, channel);
     channel.instance = this;
 
-    channel.watchInput();
+    await channel.watchInput();
 
     this.say("Registered channel " + channel.name);
     this.nextChannelId++;

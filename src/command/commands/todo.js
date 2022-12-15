@@ -8,9 +8,13 @@ class ThingsTodoCommand extends Command {
   }
 
   async input(input) {
-    input.channel.parseInput("goal");
+    input.channel.parseInput("goal", {
+      event: input.extra?.event,
+    });
     ["task", "habit"].forEach((todoType) => {
-      input.channel.parseInput(`${todoType} list`);
+      input.channel.parseInput(`${todoType} list`, {
+        event: input.extra?.event,
+      });
     });
     const response = this.emptyResponse();
     response.intentionallyEmpty = true;

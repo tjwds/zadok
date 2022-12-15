@@ -5,6 +5,11 @@ const config = {
       lng: 0,
     };
   },
+
+  discord: {
+    token: "",
+    channels: [],
+  },
 };
 
 export default config;
