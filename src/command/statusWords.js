@@ -9,4 +9,6 @@ const doneWords = [
 const undoneWords = ["reopen"];
 const statusWords = [...doneWords, ...undoneWords];
 
-export { doneWords, undoneWords, statusWords };
+const setWords = ["set", "add", "is", "create", "new"];
+
+export { doneWords, undoneWords, statusWords, setWords };

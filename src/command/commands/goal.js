@@ -1,3 +1,4 @@
+import { setWords } from "../statusWords.js";
 import { Command } from "../Command.js";
 import { Response, ERROR } from "../../response/Response.js";
 
@@ -26,7 +27,7 @@ class ThingsTodoCommand extends Command {
       },
     });
 
-    if (command === "set") {
+    if (setWords.includes(command)) {
       if (todaysGoal) {
         const response = new Response(
           "Right now, setting more than one goal is not supported."

@@ -1,5 +1,5 @@
 import { Command } from "./Command.js";
-import { doneWords, statusWords } from "./statusWords.js";
+import { doneWords, setWords, statusWords } from "./statusWords.js";
 import { Response, WARNING } from "../response/Response.js";
 
 // A TodoCommand is a kind of abstract base command for a type of task.  This
@@ -42,7 +42,7 @@ class TodoCommand extends Command {
     const text = input.words.slice(2).join(" ");
 
     // TODO DRY
-    if (["new", "add"].includes(command) && text) {
+    if (setWords.includes(command) && text) {
       const newTodo = await this.openWithTitle(text);
       return this.responseFromText(
         `Created ${this.name} ${newTodo.id}: ${text}`
