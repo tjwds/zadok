@@ -14,18 +14,22 @@ datasource db {
 // TODO for now, assume single-user
 
 model Task {
-  id    Int     @id @default(autoincrement())
-  title String
+  id          Int        @id @default(autoincrement())
+  title       String
   // TODO do I care about creation / close dateTimes? probably not…
-  done  Boolean @default(false)
+  done        Boolean    @default(false)
+  TimeBlock   TimeBlock? @relation(fields: [timeBlockId], references: [id])
+  timeBlockId Int?
 }
 
 model Habit {
-  id         Int             @id @default(autoincrement())
-  title      String
+  id          Int             @id @default(autoincrement())
+  title       String
   // TODO assuming, for now, that every habit is daily
   // TODO toggle habits as active / inactive
-  logEntries HabitLogEntry[]
+  logEntries  HabitLogEntry[]
+  TimeBlock   TimeBlock?      @relation(fields: [timeBlockId], references: [id])
+  timeBlockId Int?
 }
 
 model HabitLogEntry {
@@ -39,5 +43,12 @@ model Goal {
   id    Int      @id @default(autoincrement())
   time  DateTime @default(now())
   title String
-  done  Boolean @default(false)
+  done  Boolean  @default(false)
+}
+
+model TimeBlock {
+  id     Int     @id @default(autoincrement())
+  title  String
+  tasks  Task[]
+  habits Habit[]
 }

@@ -50,7 +50,7 @@ const DiscordChannel = class DiscordChannel extends Channel {
 
   executeOutput(response) {
     // TODO warning support
-    response.extra.event.reply(response.text);
+    response.extra.event.reply("```" + response.text + "```");
   }
 };
 
