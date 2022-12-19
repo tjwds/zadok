@@ -6,12 +6,11 @@ import { Channel } from "../Channel.js";
 
 const DiscordChannel = class DiscordChannel extends Channel {
   constructor() {
-    super("discord");
+    super("discord", !!config.discord?.token);
   }
 
   // TODO this api is kind of weird.
   async watchInput() {
-    // TODO shouldRegister? if !config.discordToken
     const client = new Client({
       intents: [
         GatewayIntentBits.Guilds,

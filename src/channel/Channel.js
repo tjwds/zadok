@@ -2,18 +2,21 @@ import { instance } from "../instance.js";
 import { Input } from "./Input.js";
 
 const Channel = class {
-  constructor(name) {
+  constructor(name, shouldRegister = true) {
     this.ready = false;
     this.instance = null;
 
     this.name = name;
+    this.shouldRegister = shouldRegister;
 
     this.initialize();
   }
 
   async initialize() {
-    await instance.registerChannel(this);
-    this.ready = true;
+    if (this.shouldRegister) {
+      await instance.registerChannel(this);
+      this.ready = true;
+    }
   }
 
   watchInput() {
