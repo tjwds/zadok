@@ -64,9 +64,7 @@ class TodoCommand extends Command {
             todos.id +
             "\t" +
             todos.title +
-            "\n\t" +
-            timeAgo(todos.created) +
-            "\n",
+            (todos.created ? "\n\t" + timeAgo(todos.created) + "\n" : ""),
           `Your ${this.pluralName} to do today:\n`
         )
       );

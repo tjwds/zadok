@@ -31,7 +31,6 @@ model Habit {
   logEntries  HabitLogEntry[]
   TimeBlock   TimeBlock?      @relation(fields: [timeBlockId], references: [id])
   timeBlockId Int?
-  created        DateTime        @default(now())
 }
 
 model HabitLogEntry {
