@@ -1,10 +1,10 @@
 import { Command } from "./Command.js";
 import { doneWords, setWords, statusWords } from "./statusWords.js";
 import { Response, WARNING } from "../response/Response.js";
+import { timeAgo } from "../../utils/timeAgo.js";
 
 // A TodoCommand is a kind of abstract base command for a type of task.  This
 // can include things like arbitrary things to do, but also things like habits.
-
 class TodoCommand extends Command {
   constructor(name, pluralName) {
     super(name);
@@ -58,7 +58,15 @@ class TodoCommand extends Command {
       }
       return this.responseFromText(
         todos.reduce(
-          (string, todos) => string + "\n" + todos.id + "\t" + todos.title,
+          (string, todos) =>
+            string +
+            "\n" +
+            todos.id +
+            "\t" +
+            todos.title +
+            "\n\t" +
+            timeAgo(todos.created) +
+            "\n",
           `Your ${this.pluralName} to do today:\n`
         )
       );

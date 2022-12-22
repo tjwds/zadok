@@ -20,6 +20,7 @@ model Task {
   done        Boolean    @default(false)
   TimeBlock   TimeBlock? @relation(fields: [timeBlockId], references: [id])
   timeBlockId Int?
+  created        DateTime   @default(now())
 }
 
 model Habit {
@@ -30,6 +31,7 @@ model Habit {
   logEntries  HabitLogEntry[]
   TimeBlock   TimeBlock?      @relation(fields: [timeBlockId], references: [id])
   timeBlockId Int?
+  created        DateTime        @default(now())
 }
 
 model HabitLogEntry {
