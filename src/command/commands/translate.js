@@ -1,8 +1,14 @@
 import { Command } from "../Command.js";
+import { HelpEntry } from "../HelpEntry.js";
 
 class TranslateCommand extends Command {
   constructor() {
     super("translate");
+
+    this.help = new HelpEntry(
+      "translate",
+      "Translate an arbitrary string into English."
+    );
   }
 
   async input(input) {

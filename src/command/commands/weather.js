@@ -1,4 +1,5 @@
 import { Command } from "../Command.js";
+import { HelpEntry } from "../HelpEntry.js";
 
 const getWeather = function resolveLocationToWeatherString(location) {
   return new Promise((resolve) => {
@@ -15,6 +16,8 @@ const getWeather = function resolveLocationToWeatherString(location) {
 class WeatherCommand extends Command {
   constructor() {
     super("weather");
+
+    this.help = new HelpEntry("weather <place name>", "What's the weather?");
   }
 
   async input(input) {

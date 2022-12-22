@@ -2,6 +2,7 @@ import { Command } from "./Command.js";
 import { doneWords, setWords, statusWords } from "./statusWords.js";
 import { Response, WARNING } from "../response/Response.js";
 import { timeAgo } from "../../utils/timeAgo.js";
+import { HelpEntry } from "./HelpEntry.js";
 
 // A TodoCommand is a kind of abstract base command for a type of task.  This
 // can include things like arbitrary things to do, but also things like habits.
@@ -11,6 +12,12 @@ class TodoCommand extends Command {
 
     this.name = name;
     this.pluralName = pluralName;
+
+    // TODO less generic
+    this.help = new HelpEntry(name, "Manage things to do.")
+      .addSubEntry("add <words>", "Add one!")
+      .addSubEntry("list", "Show 'em!")
+      .addSubEntry("done", "Mark 'em done!");
   }
 
   async openWithTitle(title) {

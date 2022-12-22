@@ -1,12 +1,18 @@
-import { setWords } from "../statusWords.js";
 import { Command } from "../Command.js";
 import { Response, WARNING } from "../../response/Response.js";
-
-// A goal is a single overarching todo for the day.
+import { HelpEntry } from "../HelpEntry.js";
 
 class TimeBlockCommand extends Command {
   constructor() {
     super("timeblock");
+
+    this.help = new HelpEntry("timeblock", "Blocks of time to get things done.")
+      .addSubEntry("create", "Make a new one.")
+      .addSubEntry("<block name>", "Show what's scheduled for that time block.")
+      .addSubEntry(
+        "<block name> add <todo type> <todo id>",
+        "e.g. `timeblock night add task 1`"
+      );
   }
 
   async input(input) {

@@ -1,8 +1,11 @@
 import { Command } from "../Command.js";
+import { HelpEntry } from "../HelpEntry.js";
 
 class ClearCommand extends Command {
   constructor() {
     super("clear");
+
+    this.help = new HelpEntry("clear", "Clear the screen.");
   }
 
   async input(input) {

@@ -1,12 +1,17 @@
 import { setWords } from "../statusWords.js";
 import { Command } from "../Command.js";
 import { Response, ERROR } from "../../response/Response.js";
+import { HelpEntry } from "../HelpEntry.js";
 
 // A goal is a single overarching todo for the day.
 
 class ThingsTodoCommand extends Command {
   constructor() {
     super("goal");
+
+    this.help = new HelpEntry("goal", "What's the goal for the day?")
+      .addSubEntry("set <words>", "Set the goal.")
+      .addSubEntry("done", "Mark the goal done.");
   }
 
   async input(input) {

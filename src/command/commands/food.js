@@ -18,6 +18,7 @@ since they're subject to change when I turn this into a database anyway.
 
 import { Command } from "../Command.js";
 import { default as config } from "../../../config.js";
+import { HelpEntry } from "../HelpEntry.js";
 
 import haversine from "haversine-distance";
 
@@ -51,6 +52,10 @@ const locationToLine = (location) => {
 class FoodCommand extends Command {
   constructor() {
     super("food");
+
+    this.help = new HelpEntry("food", "What's for lunch and/or dinner?")
+      .addSubEntry("genre", "List some genres of food near you")
+      .addSubEntry("new", "Only show places you haven't been");
   }
 
   async input(input) {
