@@ -20,7 +20,8 @@ model Task {
   done        Boolean    @default(false)
   TimeBlock   TimeBlock? @relation(fields: [timeBlockId], references: [id])
   timeBlockId Int?
-  created        DateTime   @default(now())
+  created     DateTime   @default(now())
+  type        String     @default("task")
 }
 
 model Habit {
