@@ -29,15 +29,28 @@ class TaskCommand extends TodoCommand {
     });
   }
 
+  async #findAllTasks(done) {
+    return await this.instance.source.prisma.task.findMany({
+      where: {
+        done,
+        type: this.name,
+      },
+    });
+  }
+
   async findAll(done) {
-    return (
-      await this.instance.source.prisma.task.findMany({
-        where: {
-          done,
-          type: this.name,
-        },
-      })
-    ).sort((a, b) => a.title.localeCompare(b.title));
+    return (await this.#findAllTasks(done)).sort((a, b) =>
+      a.title.localeCompare(b.title)
+    );
+  }
+
+  async findRandom(done) {
+    const allTasks = await this.#findAllTasks(done);
+    if (!allTasks.length) {
+      return null;
+    }
+
+    return allTasks[Math.floor(Math.random() * allTasks.length)];
   }
 
   async isDone(todo) {

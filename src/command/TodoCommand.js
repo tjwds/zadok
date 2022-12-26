@@ -36,6 +36,10 @@ class TodoCommand extends Command {
     throw new Error(`I can't list ${this.pluralName} yet, sorry.`);
   }
 
+  async findRandom(done) {
+    throw new Error(`I can't get random ${this.pluralName} yet, sorry.`);
+  }
+
   async isDone(todo) {
     throw new Error(
       `I can't determine whether or not ${this.pluralName}s are done yet, sorry.`
@@ -107,6 +111,27 @@ class TodoCommand extends Command {
         );
         response.type = WARNING;
 
+        return response;
+      }
+    } else if (command === "random") {
+      try {
+        const random = await this.findRandom();
+
+        if (!random) {
+          throw new Error(
+            `You don't have any ${this.pluralNames} with that ID.`
+          );
+        }
+
+        return this.responseFromText(
+          random.id +
+            "\t" +
+            random.title +
+            (random.created ? "\n\t" + timeAgo(random.created) + "\n" : "")
+        );
+      } catch (error) {
+        const response = new Response(error.message);
+        response.type = WARNING;
         return response;
       }
     }
