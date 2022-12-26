@@ -72,7 +72,7 @@ class TodoCommand extends Command {
             "\t" +
             todos.title +
             (todos.created ? "\n\t" + timeAgo(todos.created) + "\n" : ""),
-          `Your ${this.pluralName} to do today:\n`
+          `Your ${this.pluralName} to do:\n`
         )
       );
     } else if (statusWords.includes(command) && text) {
