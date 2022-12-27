@@ -59,8 +59,8 @@ class TodoCommand extends Command {
         `Created ${this.name} ${newTodo.id}: ${text}`
       );
     } else if (command === "list") {
-      // TODO filtering by done/not done
-      let todos = await this.findAll(false);
+      const isAll = input.words[2] === "all";
+      let todos = await this.findAll(isAll);
 
       if (!todos.length) {
         return this.responseFromText(
@@ -76,7 +76,7 @@ class TodoCommand extends Command {
             "\t" +
             todos.title +
             (todos.created ? "\n\t" + timeAgo(todos.created) + "\n" : ""),
-          `Your ${this.pluralName} to do:\n`
+          `Your ${this.pluralName}${isAll ? "" : " to do"}:\n`
         )
       );
     } else if (statusWords.includes(command) && text) {

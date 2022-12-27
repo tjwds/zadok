@@ -41,7 +41,9 @@ class HabitCommand extends TodoCommand {
       })
     ).map((loggedHabit) => loggedHabit.habitId);
 
-    habits = habits.filter((habit) => !loggedHabits.includes(habit.id));
+    if (!done) {
+      habits = habits.filter((habit) => !loggedHabits.includes(habit.id));
+    }
 
     return habits;
   }
