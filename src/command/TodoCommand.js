@@ -16,7 +16,10 @@ class TodoCommand extends Command {
     // TODO less generic
     this.help = new HelpEntry(name, "Manage things to do.")
       .addSubEntry("add <words>", "Add one!")
-      .addSubEntry("list", "Show 'em!")
+      .addSubEntry(
+        "list (optionally: all|n,n)",
+        "Show 'em!  Try e.g. 'list -5'"
+      )
       .addSubEntry("done", "Mark 'em done!");
   }
 
@@ -49,7 +52,7 @@ class TodoCommand extends Command {
   // ---
 
   async input(input) {
-    const command = input.words[1];
+    const [, command, subcommand] = input.words;
     const text = input.words.slice(2).join(" ");
 
     // TODO DRY
@@ -59,7 +62,7 @@ class TodoCommand extends Command {
         `Created ${this.name} ${newTodo.id}: ${text}`
       );
     } else if (command === "list") {
-      const isAll = input.words[2] === "all";
+      const isAll = subcommand === "all";
       let todos = await this.findAll(isAll);
 
       if (!todos.length) {
@@ -67,6 +70,19 @@ class TodoCommand extends Command {
           `You don't have any incomplete ${this.pluralName}.`
         );
       }
+
+      let [startString, endString] = (subcommand || "").split(",");
+      let start = Number(startString);
+      const end = Number(endString);
+      const startIsNaN = Number.isNaN(start);
+      if (!startIsNaN || !Number.isNaN(end)) {
+        if (Number.isNaN(start)) {
+          start = 0;
+        }
+
+        todos = todos.slice(start, end || undefined);
+      }
+
       return this.responseFromText(
         todos.reduce(
           (string, todos) =>
