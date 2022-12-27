@@ -19,6 +19,7 @@
     "prisma": "^4.7.1"
   },
   "dependencies": {
+    "@linear/sdk": "^1.22.0",
     "@prisma/client": "^4.7.1",
     "discord.js": "^14.7.1",
     "haversine-distance": "^1.2.1"

@@ -10,6 +10,10 @@ const config = {
     token: "",
     channels: [],
   },
+
+  linear: {
+    token: "",
+  },
 };
 
 export default config;

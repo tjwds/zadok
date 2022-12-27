@@ -1,13 +1,17 @@
+import { task } from "./task.js";
+import { habit } from "./habit.js";
+import { linear } from "./linear.js";
+
 import { Command } from "../Command.js";
 import { HelpEntry } from "../HelpEntry.js";
 
 import { timeAgo } from "../../../utils/timeAgo.js";
 
-const polymorphicTasksAreEqual = (a, b) => {
-  if (typeof a === "number") {
-    return a === b;
+const tasksAreEqual = (a, b) => {
+  if (a.id) {
+    return a.id === b.id;
   }
-  return a.id === b.id;
+  return a === b;
 };
 
 const commands = {
@@ -20,7 +24,7 @@ const commands = {
     return array;
   },
   remove(array, item) {
-    return array.filter((id) => !polymorphicTasksAreEqual(id, item));
+    return array.filter((id) => !tasksAreEqual(id, item));
   },
   pop(array) {
     array.pop();
@@ -70,6 +74,16 @@ class NextCommand extends Command {
     );
   }
 
+  taskNumberToCommandInstance(taskNumber) {
+    // XXX horrible hack based on my own personal db; fix before really sharing
+    // Number.isInteger:  test for string or NaN
+    return !Number.isInteger(taskNumber)
+      ? linear
+      : taskNumber < 100
+      ? habit
+      : task;
+  }
+
   async input(input) {
     const prisma = this.instance.source.prisma;
     const [, command, taskId] = input.words;
@@ -83,6 +97,8 @@ class NextCommand extends Command {
         },
       })
     ).map((loggedHabit) => loggedHabit.habitId);
+    const taskType = this.taskNumberToCommandInstance(taskNumber);
+
     let taskRecord;
 
     // Get the command function
@@ -98,12 +114,10 @@ class NextCommand extends Command {
         // TODO better error message
         return;
       }
-      // XXX horrible hack based on my own personal db; fix before really
-      // sharing
-      const taskType = taskNumber < 100 ? "habit" : "task";
-      taskRecord = await prisma[taskType].findUnique({
-        where: { id: taskNumber },
-      });
+      // XXX ugh, this type mismatch makes me sad
+      taskRecord = await taskType.findById(
+        Number.isNaN(taskNumber) ? taskId : taskNumber
+      );
       if (!taskRecord || taskRecord.done) {
         // TODO better error message
         return;
@@ -128,20 +142,27 @@ class NextCommand extends Command {
 
     // XXX optimize this query
     let tasksInQueue = await Promise.all(
-      queue.map((id) =>
-        prisma[id < 100 ? "habit" : "task"].findUnique({
-          where: { id },
-        })
-      )
+      queue.map((id) => this.taskNumberToCommandInstance(id).findById(id))
     );
 
     // clean the queue of tasks that are already done
-    tasksInQueue = tasksInQueue
-      .filter((task) => !task.done)
-      .filter((habit) => !loggedHabits.includes(habit.id));
+    tasksInQueue = (
+      await Promise.all(
+        tasksInQueue.map(async (task) =>
+          // XXX This is absurd.
+          (await this.taskNumberToCommandInstance(task.id).isDone(task))
+            ? null
+            : task
+        )
+      )
+    ).filter(Boolean);
 
     queue = tasksInQueue.map((task) => task.id);
-    queue = commandFunction(queue, Number(taskId));
+    // XXX Ugh, this is just a stack of bad hacks.
+    queue = commandFunction(
+      queue,
+      Number.isNaN(taskNumber) ? taskId : taskNumber
+    );
 
     await prisma.next.update({
       where: { id: queueId },
