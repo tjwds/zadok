@@ -54,3 +54,10 @@ model TimeBlock {
   tasks  Task[]
   habits Habit[]
 }
+
+model Points {
+  id     Int    @id @default(autoincrement())
+  reason String
+  amount Int
+  time   DateTime @default(now())
+}
