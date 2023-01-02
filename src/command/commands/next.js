@@ -39,7 +39,6 @@ const commands = {
   },
 };
 
-// TODO make it work with habits, too
 class NextCommand extends Command {
   constructor() {
     super("next");
@@ -74,6 +73,16 @@ class NextCommand extends Command {
   async input(input) {
     const prisma = this.instance.source.prisma;
     const [, command, taskId] = input.words;
+    const taskNumber = Number(taskId);
+    const loggedHabits = (
+      await prisma.habitLogEntry.findMany({
+        where: {
+          time: {
+            gte: this.instance.source.today,
+          },
+        },
+      })
+    ).map((loggedHabit) => loggedHabit.habitId);
     let taskRecord;
 
     // Get the command function
@@ -85,13 +94,18 @@ class NextCommand extends Command {
     // Check the arity of the function; if it requires a taskId, make sure we
     // have one
     if (commandFunction.length > 1) {
-      if (!taskId) {
+      if (!taskId || loggedHabits.includes(taskNumber)) {
+        // TODO better error message
         return;
       }
-      taskRecord = await prisma.task.findUnique({
-        where: { id: Number(taskId) },
+      // XXX horrible hack based on my own personal db; fix before really
+      // sharing
+      const taskType = taskNumber < 100 ? "habit" : "task";
+      taskRecord = await prisma[taskType].findUnique({
+        where: { id: taskNumber },
       });
-      if (!taskRecord) {
+      if (!taskRecord || taskRecord.done) {
+        // TODO better error message
         return;
       }
     }
@@ -115,14 +129,16 @@ class NextCommand extends Command {
     // XXX optimize this query
     let tasksInQueue = await Promise.all(
       queue.map((id) =>
-        prisma.task.findUnique({
+        prisma[id < 100 ? "habit" : "task"].findUnique({
           where: { id },
         })
       )
     );
 
     // clean the queue of tasks that are already done
-    tasksInQueue = tasksInQueue.filter((task) => !task.done);
+    tasksInQueue = tasksInQueue
+      .filter((task) => !task.done)
+      .filter((habit) => !loggedHabits.includes(habit.id));
 
     queue = tasksInQueue.map((task) => task.id);
     queue = commandFunction(queue, Number(taskId));
