@@ -39,6 +39,7 @@ const commands = {
   },
 };
 
+// TODO make it work with habits, too
 class NextCommand extends Command {
   constructor() {
     super("next");
