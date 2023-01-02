@@ -61,3 +61,9 @@ model Points {
   amount Int
   time   DateTime @default(now())
 }
+
+// Singleton
+model Next {
+  id     Int    @id @default(autoincrement())
+  queue  String
+}

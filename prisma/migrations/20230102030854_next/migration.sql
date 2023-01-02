@@ -1,0 +1,5 @@
+-- CreateTable
+CREATE TABLE "Next" (
+    "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+    "queue" TEXT NOT NULL
+);
