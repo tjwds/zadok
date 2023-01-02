@@ -62,14 +62,21 @@ class NextCommand extends Command {
 
   // TODO generalize this
   taskListToString(tasks) {
+    const longestId = tasks.reduce((before, task) => {
+      const taskIdLength = String(task.id).length;
+      return taskIdLength > before ? taskIdLength : before;
+    }, 0);
     return tasks.reduce(
       (string, todos) =>
         string +
         "\n" +
         todos.id +
-        "\t" +
+        " ".repeat(longestId + 2 - String(todos.id).length) +
         todos.title +
-        (todos.created ? "\n\t" + timeAgo(todos.created) + "\n" : ""),
+        (todos.created
+          ? "\n" + " ".repeat(longestId + 2) + timeAgo(todos.created)
+          : "") +
+        "\n",
       ""
     );
   }
