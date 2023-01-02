@@ -93,7 +93,12 @@ class NextCommand extends Command {
 
   async input(input) {
     const prisma = this.instance.source.prisma;
-    const [, command, taskId] = input.words;
+    let [, command, taskId] = input.words;
+
+    if (!command) {
+      command = "list";
+    }
+
     const taskNumber = Number(taskId);
     const loggedHabits = (
       await prisma.habitLogEntry.findMany({
