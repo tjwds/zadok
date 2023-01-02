@@ -56,7 +56,7 @@ model TimeBlock {
 }
 
 model Points {
-  id     Int    @id @default(autoincrement())
+  id     Int      @id @default(autoincrement())
   reason String
   amount Int
   time   DateTime @default(now())
@@ -64,6 +64,6 @@ model Points {
 
 // Singleton
 model Next {
-  id     Int    @id @default(autoincrement())
-  queue  String
+  id    Int    @id @default(autoincrement())
+  queue String
 }
