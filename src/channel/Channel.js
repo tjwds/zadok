@@ -24,9 +24,9 @@ const Channel = class {
     throw new Error("Unimplemented.");
   }
 
-  parseInput(fullMessage = "", extra) {
+  async parseInput(fullMessage = "", extra) {
     const words = fullMessage.split(" ");
-    this.actionInput(
+    await this.actionInput(
       new Input({
         fullMessage,
         words,

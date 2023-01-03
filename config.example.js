@@ -14,6 +14,10 @@ const config = {
   linear: {
     token: "",
   },
+
+  routines: {
+    example: ["ping", "translate bien le bonjour"],
+  },
 };
 
 export default config;
