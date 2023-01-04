@@ -16,10 +16,11 @@ class ThingsTodoCommand extends Command {
       response.type = WARNING;
       return response;
     }
-    ["goal", "points today", "task list", "habit list"].forEach((infoType) =>
-      input.channel.parseInput(infoType, {
-        event: input.extra?.event,
-      })
+    ["goal", "points today", "task list", "habit list", "project list"].forEach(
+      (infoType) =>
+        input.channel.parseInput(infoType, {
+          event: input.extra?.event,
+        })
     );
     const response = this.emptyResponse();
     response.intentionallyEmpty = true;
