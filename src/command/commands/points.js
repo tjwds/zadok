@@ -32,6 +32,15 @@ class PointsCommand extends Command {
 
       // TODO add list of reasons
       return this.responseFromText(`Your score for today is ${todaysPoints}.`);
+    } else if (command === "yesterday") {
+      const yesterday = this.instance.source.today;
+      yesterday.setDate(yesterday.getDate() - 1);
+      const todaysPoints = await this.pointsSince(yesterday);
+
+      // TODO add list of reasons
+      return this.responseFromText(
+        `Your score for yesterday was ${todaysPoints}.`
+      );
     } else if (String(amount) === command) {
       const reason = input.words.slice(2).join(" ");
       if (reason) {
