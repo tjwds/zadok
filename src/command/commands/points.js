@@ -39,7 +39,7 @@ class PointsCommand extends Command {
       hackArray[index] = (hackArray[index] || 0) + amount;
     });
 
-    return hackArray.filter((entry) => typeof entry === "number");
+    return Object.values(hackArray);
   }
 
   async input(input) {
