@@ -1,3 +1,5 @@
+import { asciiChart } from "../../../utils/asciiChart.js";
+
 import { Command } from "../Command.js";
 import { HelpEntry } from "../HelpEntry.js";
 
@@ -21,6 +23,25 @@ class PointsCommand extends Command {
     ).reduce((before, points) => before + points.amount, 0);
   }
 
+  async lastPointsArray() {
+    const allRecords = await this.instance.source.prisma.points.findMany();
+
+    const hackArray = [];
+    allRecords.forEach((record) => {
+      const { time, amount } = record;
+
+      const index =
+        (time.getYear() - 123) * 10000 +
+        time.getMonth() +
+        1 * 100 +
+        time.getDay() +
+        1;
+      hackArray[index] = (hackArray[index] || 0) + amount;
+    });
+
+    return hackArray.filter((entry) => typeof entry === "number");
+  }
+
   async input(input) {
     // TODO it would be great to have helpers for these
     const command = input.words[1];
@@ -40,6 +61,10 @@ class PointsCommand extends Command {
       // TODO add list of reasons
       return this.responseFromText(
         `Your score for yesterday was ${todaysPoints}.`
+      );
+    } else if (command === "chart") {
+      return this.responseFromText(
+        "\n" + asciiChart(await this.lastPointsArray())
       );
     } else if (String(amount) === command) {
       const reason = input.words.slice(2).join(" ");

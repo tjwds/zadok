@@ -1,6 +1,6 @@
 const asciiChart = function (data) {
   // TODO make configurable
-  let height = 22;
+  let height = 20;
   let width = 79;
 
   let verticalJump = 1;
