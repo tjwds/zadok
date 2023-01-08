@@ -8,9 +8,10 @@ const getAndParseIcs = async function (url) {
     .filter((event) => event.type === "VEVENT")
     .map((event) => {
       return {
-        start: event.start.toISOString(),
-        end: event.end.toISOString(),
+        start: new Date(event.start.toISOString()),
+        end: new Date(event.end.toISOString()),
         title: event.summary,
+        // TODO event colors :-)
       };
     });
 

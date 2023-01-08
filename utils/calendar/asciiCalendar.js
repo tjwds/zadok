@@ -13,6 +13,7 @@ const asciiCalendar = function ({
   notchesPerHour = 4,
   events = [],
   eventWidth = 25,
+  showAllDay = false,
 } = {}) {
   const minuteInterval = 60 / notchesPerHour;
 
@@ -30,13 +31,20 @@ const asciiCalendar = function ({
   let timer = new Date(startTime);
   setMinutesFractional(timer, startMinutes);
 
-  const eventsToShow = events.filter((event) => {
+  let eventsToShow = events.filter((event) => {
     const { start, end } = event;
     if (start < timer) {
       return end > timer;
     }
     return start <= endTime;
   });
+
+  // TODO actually have a way to show all day events
+  if (!showAllDay) {
+    eventsToShow = eventsToShow.filter(
+      ({ start, end }) => end - start < 86400000
+    );
+  }
 
   const lines = new Map();
 

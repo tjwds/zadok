@@ -18,6 +18,8 @@ const config = {
   routines: {
     example: ["ping", "translate bien le bonjour"],
   },
+
+  calendars: [],
 };
 
 export default config;
