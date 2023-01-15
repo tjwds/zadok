@@ -38,10 +38,15 @@ class TaskCommand extends TodoCommand {
     });
   }
 
-  async findAll(done) {
-    return (await this.#findAllTasks(done)).sort((a, b) =>
-      a.title.localeCompare(b.title)
-    );
+  async findAll(done, {sort = "alphabetical"} = {}) {
+    const tasks = (await this.#findAllTasks(done))
+    if (sort === "alphabetical") {
+      tasks.sort((a, b) =>
+        a.title.localeCompare(b.title)
+      );
+    }
+
+    return tasks;
   }
 
   async findRandom(done) {

@@ -52,8 +52,9 @@ class TodoCommand extends Command {
   // ---
 
   async input(input) {
-    const [, command, subcommand] = input.words;
-    const text = input.words.slice(2).join(" ");
+    const { words } = input;
+    const [, command, subcommand] = words;
+    const text = words.slice(2).join(" ");
 
     // TODO DRY
     if (setWords.includes(command) && text) {
@@ -63,7 +64,11 @@ class TodoCommand extends Command {
       );
     } else if (command === "list") {
       const isAll = subcommand === "all";
-      let todos = await this.findAll(isAll);
+      let todos = await this.findAll(isAll, {
+        sort: words.includes("chronological")
+          ? "chronological"
+          : "alphabetical",
+      });
 
       if (!todos.length) {
         return this.responseFromText(
