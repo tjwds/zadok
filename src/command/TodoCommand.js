@@ -136,7 +136,7 @@ class TodoCommand extends Command {
       }
     } else if (command === "random") {
       try {
-        const random = await this.findRandom();
+        const random = await this.findRandom(false);
 
         if (!random) {
           throw new Error(
