@@ -22,6 +22,7 @@ model Task {
   timeBlockId Int?
   created     DateTime   @default(now())
   type        String     @default("task")
+  due         DateTime?
 }
 
 model Habit {

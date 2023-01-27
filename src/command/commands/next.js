@@ -74,7 +74,11 @@ class NextCommand extends Command {
         " ".repeat(longestId + 2 - String(todos.id).length) +
         todos.title +
         (todos.created
-          ? "\n" + " ".repeat(longestId + 2) + timeAgo(todos.created)
+          ? "\n" +
+            " ".repeat(longestId + 2) +
+            timeAgo(todos.created) +
+            "\t" +
+            (todos.due ? `due ${timeAgo(todos.due)}` : "no due date")
           : "") +
         "\n",
       ""

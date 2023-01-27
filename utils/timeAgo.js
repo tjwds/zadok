@@ -13,9 +13,11 @@ const operations = [
 const timeAgo = function (date) {
   const now = new Date();
   let ago = now - date;
+  let isFuture = false;
 
   if (ago < 0) {
-    return "in the future";
+    ago = date - now;
+    isFuture = true;
   }
   if (ago < 1000) {
     return "now";
@@ -28,7 +30,7 @@ const timeAgo = function (date) {
 
     const nextOp = operations[i + 1];
     if (!nextOp || ago < nextOp[0]) {
-      return rtf.format(Math.floor(-ago), next[1]);
+      return rtf.format(Math.floor(ago) * (isFuture ? 1 : -1), next[1]);
     }
 
     i++;

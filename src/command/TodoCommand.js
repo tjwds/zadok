@@ -45,7 +45,13 @@ class TodoCommand extends Command {
 
   async isDone(todo) {
     throw new Error(
-      `I can't determine whether or not ${this.pluralName}s are done yet, sorry.`
+      `I can't determine whether or not ${this.pluralName} are done yet, sorry.`
+    );
+  }
+
+  async setDueDate(todoId, time) {
+    throw new Error(
+      `I can't set the due dates of ${this.pluralName} yet, sorry.`
     );
   }
 
@@ -53,7 +59,7 @@ class TodoCommand extends Command {
 
   async input(input) {
     const { words } = input;
-    const [, command, subcommand] = words;
+    const [, command, subcommand, word4] = words;
     const text = words.slice(2).join(" ");
 
     // TODO DRY
@@ -96,7 +102,13 @@ class TodoCommand extends Command {
             todos.id +
             "\t" +
             todos.title +
-            (todos.created ? "\n\t" + timeAgo(todos.created) + "\n" : ""),
+            (todos.created
+              ? "\n\t" +
+                timeAgo(todos.created) +
+                "\t" +
+                (todos.due ? `due ${timeAgo(todos.due)}` : "no due date") +
+                "\n"
+              : ""),
           `Your ${this.pluralName}${isAll ? "" : " to do"}:\n`
         )
       );
@@ -155,6 +167,9 @@ class TodoCommand extends Command {
         response.type = WARNING;
         return response;
       }
+    } else if (command === "due") {
+      await this.setDueDate(subcommand, word4);
+      return this.responseFromText("Due date set.  You can do it!");
     }
   }
 }

@@ -38,12 +38,10 @@ class TaskCommand extends TodoCommand {
     });
   }
 
-  async findAll(done, {sort = "alphabetical"} = {}) {
-    const tasks = (await this.#findAllTasks(done))
+  async findAll(done, { sort = "alphabetical" } = {}) {
+    const tasks = await this.#findAllTasks(done);
     if (sort === "alphabetical") {
-      tasks.sort((a, b) =>
-        a.title.localeCompare(b.title)
-      );
+      tasks.sort((a, b) => a.title.localeCompare(b.title));
     }
 
     return tasks;
@@ -60,6 +58,17 @@ class TaskCommand extends TodoCommand {
 
   async isDone(todo) {
     return !!todo.done;
+  }
+
+  async setDueDate(todoId, time) {
+    const due = new Date(time);
+    if (Number.isNaN(Number(due))) {
+      throw new Error(`${time} is not a valid date.`);
+    }
+    return await this.instance.source.prisma.task.update({
+      where: { id: Number(todoId) },
+      data: { due },
+    });
   }
 }
 
