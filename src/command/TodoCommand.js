@@ -17,8 +17,8 @@ class TodoCommand extends Command {
     this.help = new HelpEntry(name, "Manage things to do.")
       .addSubEntry("add <words>", "Add one!")
       .addSubEntry(
-        "list (optionally: all|n,n)",
-        "Show 'em!  Try e.g. 'list -5'"
+        "list (optionally: all|n,n|chronological|upcoming)",
+        "Show 'em!  Try e.g. 'list -5'.  Can sort, too: upcoming is by due date."
       )
       .addSubEntry("done", "Mark 'em done!");
   }
@@ -70,9 +70,12 @@ class TodoCommand extends Command {
       );
     } else if (command === "list") {
       const isAll = subcommand === "all";
+
       let todos = await this.findAll(isAll, {
         sort: words.includes("chronological")
           ? "chronological"
+          : words.includes("upcoming")
+          ? "due"
           : "alphabetical",
       });
 

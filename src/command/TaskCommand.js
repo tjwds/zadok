@@ -42,6 +42,8 @@ class TaskCommand extends TodoCommand {
     const tasks = await this.#findAllTasks(done);
     if (sort === "alphabetical") {
       tasks.sort((a, b) => a.title.localeCompare(b.title));
+    } else if (sort === "due") {
+      tasks.sort((a, b) => a.due - b.due);
     }
 
     return tasks;
