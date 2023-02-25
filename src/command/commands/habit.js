@@ -29,8 +29,9 @@ class HabitCommand extends TodoCommand {
     const source = this.instance.source;
     const prisma = source.prisma;
 
-    let habits = await prisma.habit.findMany();
-
+    let habits = (await prisma.habit.findMany()).filter(
+      (habit) => habit.active
+    );
     const loggedHabits = (
       await prisma.habitLogEntry.findMany({
         where: {
@@ -73,6 +74,45 @@ class HabitCommand extends TodoCommand {
     return await this.instance.source.prisma.habitLogEntry.create({
       data: { habitId: habit.id },
     });
+  }
+
+  async input(input) {
+    const response = await super.input(input);
+    if (response) {
+      return response;
+    }
+
+    const { words } = input;
+    const [, command] = words;
+    const text = words.slice(2).join(" ");
+
+    let newActiveState;
+    if (["activate", "enable"].includes(command)) {
+      newActiveState = true;
+    } else if (["disable", "deactivate"].includes(command)) {
+      newActiveState = false;
+    }
+    if (typeof newActiveState === "boolean" && text) {
+      const id = Number(text);
+      const habit = await this.findById(id);
+
+      try {
+        await this.instance.source.prisma.habit.update({
+          where: { id: habit.id },
+          data: {
+            active: newActiveState,
+          },
+        });
+      } catch (err) {
+        return;
+      }
+
+      return this.responseFromText(
+        `Habit ${id} ${newActiveState ? "enabled" : "disabled"}: ${
+          habit.title
+        }.`
+      );
+    }
   }
 }
 
