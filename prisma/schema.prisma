@@ -29,7 +29,7 @@ model Habit {
   id          Int             @id @default(autoincrement())
   title       String
   // TODO assuming, for now, that every habit is daily
-  // TODO toggle habits as active / inactive
+  active      Boolean         @default(true)
   logEntries  HabitLogEntry[]
   TimeBlock   TimeBlock?      @relation(fields: [timeBlockId], references: [id])
   timeBlockId Int?
