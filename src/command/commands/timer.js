@@ -44,6 +44,11 @@ class TimerCommand extends Command {
         tags.forEach((tag) => {
           tagsToSeconds.set(tag, (tagsToSeconds.get(tag) || 0) + duration);
         });
+      } else {
+        tagsToSeconds.set(
+          "No label",
+          (tagsToSeconds.get("No label") || 0) + duration
+        );
       }
     });
 
