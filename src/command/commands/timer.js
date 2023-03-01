@@ -16,11 +16,12 @@ class TimerCommand extends Command {
 
   async input(input) {
     const { words } = input;
+    const forWeek = words.includes("--week");
 
     // TODO add more filtering/reporting
     const today = this.instance.source.today;
     const start = new Date(today);
-    start.setDate(today.getDate() - 2);
+    start.setDate(today.getDate() - (forWeek ? 9 : 2));
     const end = new Date(today);
     end.setDate(today.getDate() + 2);
 
@@ -34,23 +35,33 @@ class TimerCommand extends Command {
       )}&start=${start.getFullYear()}-${String(start.getMonth() + 1).padStart(
         2,
         "0"
-      )}-${String(start.getDate()).padStart(2, "0")}&limit=200`,
+      )}-${String(start.getDate()).padStart(2, "0")}&limit=1000`,
       { accept: "application/json" }
     );
     const items = await req.json();
 
-    const buildReport = words[1] === "report";
-    const keyword = words[2];
+    const filteredWords = words.filter((word) => !word.startsWith("--"));
+    const buildReport = filteredWords[1] === "report";
+    const keyword = filteredWords[2];
+
     const tagsToSeconds = new Map();
     const peopleToSeconds = new Map();
     let workedSeconds = 0;
     let reportItemToSeconds = new Map();
 
+    let dateToCheck = new Date(today);
+    if (forWeek) {
+      dateToCheck.setDate(today.getDate() - 1);
+    }
+
     items.forEach((item) => {
       const { duration, timestamp } = item;
-      const dateDelta = new Date(timestamp) - today;
+      const dateDelta = new Date(timestamp) - dateToCheck;
 
-      if (dateDelta < 0 || dateDelta > 1000 * 60 * 60 * 24) {
+      if (
+        dateDelta < 0 ||
+        dateDelta > 1000 * 60 * 60 * 24 * (forWeek ? 7 : 1)
+      ) {
         return;
       }
 
@@ -91,9 +102,9 @@ class TimerCommand extends Command {
       }
     });
 
-    let result = `You've worked ${(workedSeconds / 60 / 60).toFixed(
-      2
-    )} hours today.`;
+    let result = `You've worked ${(workedSeconds / 60 / 60).toFixed(2)} hours ${
+      forWeek ? "this week" : "today"
+    }.`;
     [
       [tagsToSeconds, "Labels"],
       [peopleToSeconds, "With these people"],
