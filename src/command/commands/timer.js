@@ -14,7 +14,9 @@ class TimerCommand extends Command {
     );
   }
 
-  async input() {
+  async input(input) {
+    const { words } = input;
+
     // TODO add more filtering/reporting
     const today = this.instance.source.today;
     const start = new Date(today);
@@ -37,9 +39,13 @@ class TimerCommand extends Command {
     );
     const items = await req.json();
 
+    const buildReport = words[1] === "report";
+    const keyword = words[2];
     const tagsToSeconds = new Map();
     const peopleToSeconds = new Map();
     let workedSeconds = 0;
+    let reportItemToSeconds = new Map();
+
     items.forEach((item) => {
       const { duration, timestamp } = item;
       const dateDelta = new Date(timestamp) - today;
@@ -53,6 +59,12 @@ class TimerCommand extends Command {
       if (tags) {
         tags.forEach((tag) => {
           tagsToSeconds.set(tag, (tagsToSeconds.get(tag) || 0) + duration);
+          if (buildReport && `#${keyword}` === tag) {
+            reportItemToSeconds.set(
+              item.data.label,
+              (reportItemToSeconds.get(item.data.label) || 0) + duration
+            );
+          }
         });
       } else {
         tagsToSeconds.set(
@@ -68,6 +80,13 @@ class TimerCommand extends Command {
             person,
             (peopleToSeconds.get(person) || 0) + duration
           );
+
+          if (buildReport && `@${keyword}` === person) {
+            reportItemToSeconds.set(
+              item.data.label,
+              (reportItemToSeconds.get(item.data.label) || 0) + duration
+            );
+          }
         });
       }
     });
@@ -78,12 +97,15 @@ class TimerCommand extends Command {
     [
       [tagsToSeconds, "Labels"],
       [peopleToSeconds, "With these people"],
-    ].forEach(([collection, collectionName]) => {
+      [reportItemToSeconds, `Report for ${keyword}`, true],
+    ].forEach(([collection, collectionName, reportOrdering]) => {
       if (collection.size) {
         result += `\n---\n${collectionName}:`;
         collection.forEach((value, key) => {
           result += "\n";
-          result += `${key}: ${(value / 60 / 60).toFixed(2)}h`;
+          result += reportOrdering
+            ? `${(value / 60 / 60).toFixed(2)}h\t${key}`
+            : `${key}: ${(value / 60 / 60).toFixed(2)}h`;
         });
       }
     });
