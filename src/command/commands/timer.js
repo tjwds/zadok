@@ -16,20 +16,22 @@ class TimerCommand extends Command {
   async input() {
     // TODO add more filtering/reporting
     const today = this.instance.source.today;
-    const tomorrow = new Date(today);
-    tomorrow.setDate(today.getDate() + 1);
+    const start = new Date(today);
+    start.setDate(today.getDate() - 2);
+    const end = new Date(today);
+    end.setDate(today.getDate() + 2);
 
     const req = await fetch(
       // TODO parameterize
-      `http://localhost:5600/api/0/buckets/aw-stopwatch/events?end=${tomorrow.getFullYear()}-${String(
-        tomorrow.getMonth() + 1
-      ).padStart(2, "0")}-${String(tomorrow.getDate()).padStart(
+      `http://localhost:5600/api/0/buckets/aw-stopwatch/events?end=${end.getFullYear()}-${String(
+        end.getMonth() + 1
+      ).padStart(2, "0")}-${String(end.getDate()).padStart(
         2,
         "0"
-      )}&start=${today.getFullYear()}-${String(today.getMonth() + 1).padStart(
+      )}&start=${start.getFullYear()}-${String(start.getMonth() + 1).padStart(
         2,
         "0"
-      )}-${String(today.getDate()).padStart(2, "0")}&limit=200`,
+      )}-${String(start.getDate()).padStart(2, "0")}&limit=200`,
       { accept: "application/json" }
     );
     const items = await req.json();
@@ -37,7 +39,13 @@ class TimerCommand extends Command {
     const tagsToSeconds = new Map();
     let workedSeconds = 0;
     items.forEach((item) => {
-      const { duration } = item;
+      const { duration, timestamp } = item;
+      const dateDelta = new Date(timestamp) - today;
+
+      if (dateDelta < 0 || dateDelta > 1000 * 60 * 60 * 24) {
+        return;
+      }
+
       workedSeconds += duration;
       const tags = item.data.label.match(tagRegex);
       if (tags) {
