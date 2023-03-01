@@ -1,7 +1,7 @@
 import { Command } from "../Command.js";
 import { HelpEntry } from "../HelpEntry.js";
 
-const tagRegex = /#[a-zA-Z0-9]+/g;
+const tagRegex = /#[a-zA-Z0-9-]+/g;
 
 class TimerCommand extends Command {
   constructor() {
