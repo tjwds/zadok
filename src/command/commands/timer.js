@@ -2,6 +2,7 @@ import { Command } from "../Command.js";
 import { HelpEntry } from "../HelpEntry.js";
 
 const tagRegex = /#[a-zA-Z0-9-]+/g;
+const peopleRegex = /@[a-zA-Z0-9]+/g;
 
 class TimerCommand extends Command {
   constructor() {
@@ -37,6 +38,7 @@ class TimerCommand extends Command {
     const items = await req.json();
 
     const tagsToSeconds = new Map();
+    const peopleToSeconds = new Map();
     let workedSeconds = 0;
     items.forEach((item) => {
       const { duration, timestamp } = item;
@@ -58,17 +60,33 @@ class TimerCommand extends Command {
           (tagsToSeconds.get("No label") || 0) + duration
         );
       }
+
+      const people = item.data.label.match(peopleRegex);
+      if (people) {
+        people.forEach((person) => {
+          peopleToSeconds.set(
+            person,
+            (peopleToSeconds.get(person) || 0) + duration
+          );
+        });
+      }
     });
 
     let result = `You've worked ${(workedSeconds / 60 / 60).toFixed(
       2
     )} hours today.`;
-    if (tagsToSeconds.size) {
-      tagsToSeconds.forEach((value, key) => {
-        result += "\n";
-        result += `${key}: ${(value / 60 / 60).toFixed(2)}h`;
-      });
-    }
+    [
+      [tagsToSeconds, "Labels"],
+      [peopleToSeconds, "With these people"],
+    ].forEach(([collection, collectionName]) => {
+      if (collection.size) {
+        result += `\n---\n${collectionName}:`;
+        collection.forEach((value, key) => {
+          result += "\n";
+          result += `${key}: ${(value / 60 / 60).toFixed(2)}h`;
+        });
+      }
+    });
     return this.responseFromText(result);
   }
 }
