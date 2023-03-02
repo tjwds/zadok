@@ -112,12 +112,14 @@ class TimerCommand extends Command {
     ].forEach(([collection, collectionName, reportOrdering]) => {
       if (collection.size) {
         result += `\n---\n${collectionName}:`;
-        collection.forEach((value, key) => {
-          result += "\n";
-          result += reportOrdering
-            ? `${(value / 60 / 60).toFixed(2)}h\t${key}`
-            : `${key}: ${(value / 60 / 60).toFixed(2)}h`;
-        });
+        [...collection.entries()]
+          .sort(([, a], [, b]) => b - a)
+          .forEach(([key, value]) => {
+            result += "\n";
+            result += reportOrdering
+              ? `${(value / 60 / 60).toFixed(2)}h\t${key}`
+              : `${key}: ${(value / 60 / 60).toFixed(2)}h`;
+          });
       }
     });
     return this.responseFromText(result);
