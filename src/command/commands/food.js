@@ -25,7 +25,8 @@ import haversine from "haversine-distance";
 import foodDict from "../../../food.json" assert { type: "json" };
 
 const foodFeatures = foodDict.features.filter(
-  (feature) => !feature.tags?.ban && !feature.tags?.uninterested
+  (feature) =>
+    !feature.tags?.ban && !feature.tags?.uninterested && !feature.tags?.closed
 );
 
 // TODO this is currently static, but it could end up being dynamic
