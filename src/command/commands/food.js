@@ -76,7 +76,7 @@ class FoodCommand extends Command {
     }
     // TODO
     const response = [`I'm assuming you're in ${location.name}.`, ""];
-    let foodArr = foodFeatures;
+    let foodArr = foodFeatures.filter((item) => item.properties.name);
 
     if (input.words.includes("new")) {
       foodArr = foodArr.filter((feature) => !feature.tags?.visited);
