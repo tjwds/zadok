@@ -1,4 +1,5 @@
 import { Source } from "./source/Source.js";
+import { exec } from "child_process";
 
 const Instance = class {
   constructor() {
@@ -27,7 +28,8 @@ const Instance = class {
   }
 
   sayHi() {
-    this.say("Hi there.");
+    exec('say -v Bells "Zadok online"');
+    this.say("Zadok online. Hi there.");
   }
 
   say(text, prefix = "🌳") {
