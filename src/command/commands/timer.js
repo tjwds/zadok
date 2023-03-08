@@ -27,7 +27,7 @@ class TimerCommand extends Command {
 
     const req = await fetch(
       // TODO parameterize
-      `http://localhost:5600/api/0/buckets/aw-stopwatch/events?end=${end.getFullYear()}-${String(
+      `http://127.0.0.1:5600/api/0/buckets/aw-stopwatch/events?end=${end.getFullYear()}-${String(
         end.getMonth() + 1
       ).padStart(2, "0")}-${String(end.getDate()).padStart(
         2,
