@@ -20,6 +20,8 @@ const config = {
   },
 
   calendars: [],
+
+  backupCommand: "",
 };
 
 export default config;
