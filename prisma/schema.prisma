@@ -68,3 +68,10 @@ model Next {
   id    Int    @id @default(autoincrement())
   queue String
 }
+
+model LogEntry {
+  id    Int      @id @default(autoincrement())
+  time  DateTime @default(now())
+  type  String
+  value String
+}
