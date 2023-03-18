@@ -17,7 +17,7 @@ class TodoCommand extends Command {
     this.help = new HelpEntry(name, "Manage things to do.")
       .addSubEntry("add <words>", "Add one!")
       .addSubEntry(
-        "list (optionally: all|n,n|chronological|upcoming)",
+        "list (optionally: all|n,n|chronological|unpack|upcoming)",
         "Show 'em!  Try e.g. 'list -5'.  Can sort, too: upcoming is by due date."
       )
       .addSubEntry("done", "Mark 'em done!");
@@ -70,6 +70,7 @@ class TodoCommand extends Command {
       );
     } else if (command === "list") {
       const isAll = subcommand === "all";
+      const shouldUnpack = words.includes("unpack");
 
       let todos = await this.findAll(isAll, {
         sort: words.includes("chronological")
@@ -97,24 +98,67 @@ class TodoCommand extends Command {
         todos = todos.slice(start, end || undefined);
       }
 
-      return this.responseFromText(
-        todos.reduce(
-          (string, todos) =>
-            string +
-            "\n" +
-            todos.id +
-            "\t" +
-            todos.title +
-            (todos.created
-              ? "\n\t" +
-                timeAgo(todos.created) +
-                "\t" +
-                (todos.due ? `due ${timeAgo(todos.due)}` : "no due date") +
-                "\n"
-              : ""),
-          `Your ${this.pluralName}${isAll ? "" : " to do"}:\n`
-        )
+      const groups = new Map();
+      if (!shouldUnpack) {
+        todos.forEach((task) => {
+          const { title } = task;
+          const colonIndex = title.indexOf(":");
+          if (colonIndex > -1) {
+            const groupName = title.slice(0, colonIndex);
+            const amount = groups.get(groupName) || 0;
+            groups.set(groupName, amount + 1);
+          }
+        });
+
+        // weird comparator because value could be undefined
+        todos = todos.filter(
+          (task) => !(groups.get(task.title.split(":")[0]) > 1)
+        );
+      }
+
+      let responseString = todos.reduce(
+        (string, todos) =>
+          string +
+          "\n" +
+          todos.id +
+          "\t" +
+          todos.title +
+          (todos.created
+            ? "\n\t" +
+              timeAgo(todos.created) +
+              "\t" +
+              (todos.due ? `due ${timeAgo(todos.due)}` : "no due date") +
+              "\n"
+            : ""),
+        `Your ${this.pluralName}${isAll ? "" : " to do"}:\n`
       );
+
+      if (!shouldUnpack) {
+        const labelNames = Array.from(groups.entries())
+          .filter(([, value]) => value > 1)
+          .map(([key]) => key);
+        if (labelNames.length) {
+          const labels =
+            labelNames.length === 1
+              ? labelNames[0]
+              : labelNames.length === 2
+              ? labelNames.join(" and ")
+              : labelNames.reduce((previous, next, index) => {
+                  return (
+                    previous +
+                    (index === labelNames.length - 1
+                      ? ", and "
+                      : index
+                      ? ", "
+                      : "") +
+                    next
+                  );
+                }, "");
+          responseString += `\n…and some ${this.pluralName} labeled ${labels}.\n`;
+        }
+      }
+
+      return this.responseFromText(responseString);
     } else if (statusWords.includes(command) && text) {
       const done = doneWords.includes(command);
       const id = Number(text);
