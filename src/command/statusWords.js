@@ -6,7 +6,7 @@ const doneWords = [
   "completed",
   "close",
 ];
-const undoneWords = ["reopen"];
+const undoneWords = ["reopen", "undone"];
 const statusWords = [...doneWords, ...undoneWords];
 
 // TODO createWords
