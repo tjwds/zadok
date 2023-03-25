@@ -29,6 +29,8 @@ const config = {
     lastFmUsername: "",
     mastodonApiUrl: "https://oldinternet.net/api/v1/accounts/1/statuses",
     whatpulseUsername: "",
+    omglolApiKey: "",
+    omglolAccount: "",
   },
 };
 

@@ -21,7 +21,7 @@ class NowCommand extends Command {
       .map((networkInterface) => geoip.lookup(networkInterface.address))
       .filter(Boolean)[0];
     if (location) {
-      nowText += `🌐 I'm in ${location.city}, ${location.region}, ${location.country}.`;
+      nowText += `🌐 I'm in ${location.city}, ${location.region}, ${location.country}.  `;
 
       const res = await fetch(`https://wttr.in/${location.city}?format=j1`);
       const data = await res.json();
@@ -78,7 +78,7 @@ class NowCommand extends Command {
     }
 
     if (latestPost) {
-      nowText += `\n\n📓 My latest blog post: [${latestPost.title.rendered}](${latestPost.link})`;
+      nowText += `\n\n📓 My latest blog post: [${latestPost.title.rendered}](${latestPost.link})  `;
     }
     if (latestRoundup) {
       nowText += `\n🤠 My latest roundup: [${latestRoundup.title.rendered}](${latestRoundup.link})`;
@@ -87,14 +87,27 @@ class NowCommand extends Command {
     const mastodonRes = await fetch(config.now.mastodonApiUrl);
     const toots = await mastodonRes.json();
     const latestToot = toots.find((toot) => toot.visibility !== "unlisted");
-    nowText += `\n\n🐘 My latest toot:\n${latestToot.content
+    nowText += `\n\n🐘 My latest toot:  \n${latestToot.content
       .replaceAll("</p><p>", "\n\n")
-      .replaceAll(/<[^>]*>/g, "")}\n[link](${latestToot.url})`;
+      .replaceAll(/<[^>]*>/g, "")}  \n[link](${latestToot.url})`;
 
     // mood?
     // reading
 
     nowText += "\n\n🌳 Generated with [Zadok](https://github.com/tjwds/zadok)";
+
+    await fetch(`https://api.omg.lol/address/${config.now.omglolAccount}/now`, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${config.now.omglolApiKey}`,
+      },
+      body: JSON.stringify({
+        content: `<div style="text-align: left;">${nowText.replaceAll(
+          "  ",
+          "<br />"
+        )}</div>`,
+      }),
+    });
 
     return this.responseFromText(nowText);
   }
