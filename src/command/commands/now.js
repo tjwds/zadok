@@ -5,6 +5,15 @@ import { Command } from "../Command.js";
 import { HelpEntry } from "../HelpEntry.js";
 import config from "../../../config.js";
 
+const formatWeather = (value) =>
+  value
+    .toLowerCase()
+    .replace("mist", "misting")
+    .replace("rain", "raining")
+    .replace("fog", "foggy")
+    .replace("light", "lightly")
+    .replace("heavy", "heavily");
+
 class NowCommand extends Command {
   constructor() {
     super("now");
@@ -35,9 +44,9 @@ class NowCommand extends Command {
         .find((x) => Number(x.time) < timeAsNumber);
 
       if (nowWeather) {
-        nowText += `\n🌡️ It's ${nowWeather.weatherDesc[0].value.toLowerCase()} and ${
-          nowWeather.tempC
-        }C.`;
+        nowText += `\n🌡️ It's ${formatWeather(
+          nowWeather.weatherDesc[0].value
+        )} and ${nowWeather.tempC}C.`;
       }
     }
 
