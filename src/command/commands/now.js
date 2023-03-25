@@ -87,11 +87,9 @@ class NowCommand extends Command {
     const mastodonRes = await fetch(config.now.mastodonApiUrl);
     const toots = await mastodonRes.json();
     const latestToot = toots.find((toot) => toot.visibility !== "unlisted");
-    // XXX this isn't right now that I think about it
-    nowText += `\n\n🐘 My latest toot:  [${latestToot.content.replaceAll(
-      /<.+>(.+)<\/.+>/g,
-      "$1"
-    )}](${latestToot.url})`;
+    nowText += `\n\n🐘 My latest toot:\n${latestToot.content
+      .replaceAll("</p><p>", "\n\n")
+      .replaceAll(/<[^>]*>/g, "")}\n[link](${latestToot.url})`;
 
     // mood?
     // reading
