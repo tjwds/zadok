@@ -25,6 +25,8 @@ const config = {
 
   now: {
     blogUrl: "https://blog.joewoods.dev",
+    lastFmApiKey: "",
+    lastFmUsername: "",
   },
 };
 

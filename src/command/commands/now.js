@@ -44,7 +44,14 @@ class NowCommand extends Command {
       }
     }
 
-    // last.fm
+    const lastFmRes = await fetch(
+      `https://ws.audioscrobbler.com/2.0/?method=user.getrecenttracks&user=${config.now.lastFmUsername}&api_key=${config.now.lastFmApiKey}&format=json&limit=1`
+    );
+    const lastFmJson = await lastFmRes.json();
+    const lastTrack = lastFmJson.recenttracks.track[0];
+    console.log(
+      `I recently listened to "${lastTrack.name}" by ${lastTrack.artist["#text"]}.`
+    );
 
     // whatpulse
 
