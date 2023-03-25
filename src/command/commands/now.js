@@ -106,6 +106,7 @@ class NowCommand extends Command {
           "  ",
           "<br />"
         )}</div>`,
+        listed: "1",
       }),
     });
 
