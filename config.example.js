@@ -22,6 +22,10 @@ const config = {
   calendars: [],
 
   backupCommand: "",
+
+  now: {
+    blogUrl: "https://blog.joewoods.dev",
+  },
 };
 
 export default config;

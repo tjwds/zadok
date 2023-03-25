@@ -3,6 +3,7 @@ import os from "os";
 
 import { Command } from "../Command.js";
 import { HelpEntry } from "../HelpEntry.js";
+import config from "../../../config.js";
 
 class NowCommand extends Command {
   constructor() {
@@ -44,11 +45,41 @@ class NowCommand extends Command {
     }
 
     // last.fm
-    // last roundup article
 
     // whatpulse
 
-    // last blog post
+    const wpRes = await fetch(
+      `${config.now.blogUrl}/wp-json/wp/v2/posts?_embed&per_page=10`
+    );
+    const wpData = await wpRes.json();
+
+    let latestRoundup;
+    let latestPost;
+    for (let i = 0; (!latestRoundup || !latestPost) && i < wpData.length; i++) {
+      const post = wpData[i];
+      const isRoundup = post.categories.includes(2);
+      if (isRoundup) {
+        if (!latestRoundup) {
+          latestRoundup = post;
+        }
+      } else {
+        if (!latestPost) {
+          latestPost = post;
+        }
+      }
+    }
+
+    if (latestPost) {
+      console.log(
+        `My latest blog post: [${latestPost.title.rendered}](${latestPost.link})`
+      );
+    }
+    if (latestRoundup) {
+      console.log(
+        `My latest roundup: [${latestRoundup.title.rendered}](${latestRoundup.link})`
+      );
+    }
+
     // last toot
 
     // mood?
