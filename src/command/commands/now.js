@@ -13,6 +13,7 @@ class NowCommand extends Command {
   }
 
   async input() {
+    const now = new Date();
     let nowText = "";
 
     const networkInterfaces = os.networkInterfaces();
@@ -25,8 +26,6 @@ class NowCommand extends Command {
 
       const res = await fetch(`https://wttr.in/${location.city}?format=j1`);
       const data = await res.json();
-
-      const now = new Date();
 
       const timeAsNumber = Number(
         `${now.getHours()}${String(now.getMinutes()).padStart(2, "0")}`
@@ -94,7 +93,18 @@ class NowCommand extends Command {
     // mood?
     // reading
 
-    nowText += "\n\n🌳 Generated with [Zadok](https://github.com/tjwds/zadok)";
+    nowText += `\n\n🌳 Generated with [Zadok](https://github.com/tjwds/zadok) on ${now.toLocaleString(
+      "en-US",
+      {
+        hour: "numeric",
+        minute: "numeric",
+        hour12: true,
+        month: "long",
+        day: "numeric",
+        year: "numeric",
+        ordinal: "numeric",
+      }
+    )}.`;
 
     await fetch(`https://api.omg.lol/address/${config.now.omglolAccount}/now`, {
       method: "POST",
