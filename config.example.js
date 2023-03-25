@@ -22,6 +22,16 @@ const config = {
   calendars: [],
 
   backupCommand: "",
+
+  now: {
+    blogUrl: "https://blog.joewoods.dev",
+    lastFmApiKey: "",
+    lastFmUsername: "",
+    mastodonApiUrl: "https://oldinternet.net/api/v1/accounts/1/statuses",
+    whatpulseUsername: "",
+    omglolApiKey: "",
+    omglolAccount: "",
+  },
 };
 
 export default config;
