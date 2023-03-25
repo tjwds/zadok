@@ -53,7 +53,14 @@ class NowCommand extends Command {
       `I recently listened to "${lastTrack.name}" by ${lastTrack.artist["#text"]}.`
     );
 
-    // whatpulse
+    const whatpulseRes = await fetch(
+      `https://api.whatpulse.org/user.php?user=${config.now.whatpulseUsername}&format=json`
+    );
+    const whatpulseJson = await whatpulseRes.json();
+    // TODO maybe higher-fidelity data here would be nice.
+    console.log(
+      `I've typed ${whatpulseJson.Keys} keys and clicked ${whatpulseJson.Clicks} times.`
+    );
 
     const wpRes = await fetch(
       `${config.now.blogUrl}/wp-json/wp/v2/posts?_embed&per_page=10`
