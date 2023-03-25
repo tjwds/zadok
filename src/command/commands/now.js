@@ -95,6 +95,9 @@ class NowCommand extends Command {
 
     // mood?
     // reading
+
+    nowText += "\n\n🌳 Generated with [Zadok](https://github.com/tjwds/zadok)";
+
     return this.responseFromText(nowText);
   }
 }
