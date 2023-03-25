@@ -27,6 +27,7 @@ const config = {
     blogUrl: "https://blog.joewoods.dev",
     lastFmApiKey: "",
     lastFmUsername: "",
+    mastodonApiUrl: "https://oldinternet.net/api/v1/accounts/1/statuses",
   },
 };
 

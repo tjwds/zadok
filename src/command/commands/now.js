@@ -87,7 +87,15 @@ class NowCommand extends Command {
       );
     }
 
-    // last toot
+    const mastodonRes = await fetch(config.now.mastodonApiUrl);
+    const toots = await mastodonRes.json();
+    const latestToot = toots.find((toot) => toot.visibility !== "unlisted");
+    console.log(
+      `My latest toot:  [${latestToot.content.replaceAll(
+        /<.+>(.+)<\/.+>/g,
+        "$1"
+      )}](${latestToot.url})`
+    );
 
     // mood?
     // reading
