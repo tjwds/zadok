@@ -13,15 +13,15 @@ class NowCommand extends Command {
   }
 
   async input() {
+    let nowText = "";
+
     const networkInterfaces = os.networkInterfaces();
     const location = Object.values(networkInterfaces)
       .flat()
       .map((networkInterface) => geoip.lookup(networkInterface.address))
       .filter(Boolean)[0];
     if (location) {
-      console.log(
-        `I'm in ${location.city}, ${location.region}, ${location.country}.`
-      );
+      nowText += `🌐 I'm in ${location.city}, ${location.region}, ${location.country}.`;
 
       const res = await fetch(`https://wttr.in/${location.city}?format=j1`);
       const data = await res.json();
@@ -36,11 +36,9 @@ class NowCommand extends Command {
         .find((x) => Number(x.time) < timeAsNumber);
 
       if (nowWeather) {
-        console.log(
-          `It's ${nowWeather.weatherDesc[0].value.toLowerCase()} and ${
-            nowWeather.tempC
-          }C.`
-        );
+        nowText += `\n🌡️ It's ${nowWeather.weatherDesc[0].value.toLowerCase()} and ${
+          nowWeather.tempC
+        }C.`;
       }
     }
 
@@ -49,18 +47,14 @@ class NowCommand extends Command {
     );
     const lastFmJson = await lastFmRes.json();
     const lastTrack = lastFmJson.recenttracks.track[0];
-    console.log(
-      `I recently listened to "${lastTrack.name}" by ${lastTrack.artist["#text"]}.`
-    );
+    nowText += `\n\n🎧 I recently listened to "${lastTrack.name}" by ${lastTrack.artist["#text"]}.`;
 
     const whatpulseRes = await fetch(
       `https://api.whatpulse.org/user.php?user=${config.now.whatpulseUsername}&format=json`
     );
     const whatpulseJson = await whatpulseRes.json();
     // TODO maybe higher-fidelity data here would be nice.
-    console.log(
-      `I've typed ${whatpulseJson.Keys} keys and clicked ${whatpulseJson.Clicks} times.`
-    );
+    nowText += `\n\n⌨️ I've typed ${whatpulseJson.Keys} keys and clicked ${whatpulseJson.Clicks} times.`;
 
     const wpRes = await fetch(
       `${config.now.blogUrl}/wp-json/wp/v2/posts?_embed&per_page=10`
@@ -84,28 +78,24 @@ class NowCommand extends Command {
     }
 
     if (latestPost) {
-      console.log(
-        `My latest blog post: [${latestPost.title.rendered}](${latestPost.link})`
-      );
+      nowText += `\n\n📓 My latest blog post: [${latestPost.title.rendered}](${latestPost.link})`;
     }
     if (latestRoundup) {
-      console.log(
-        `My latest roundup: [${latestRoundup.title.rendered}](${latestRoundup.link})`
-      );
+      nowText += `\n🤠 My latest roundup: [${latestRoundup.title.rendered}](${latestRoundup.link})`;
     }
 
     const mastodonRes = await fetch(config.now.mastodonApiUrl);
     const toots = await mastodonRes.json();
     const latestToot = toots.find((toot) => toot.visibility !== "unlisted");
-    console.log(
-      `My latest toot:  [${latestToot.content.replaceAll(
-        /<.+>(.+)<\/.+>/g,
-        "$1"
-      )}](${latestToot.url})`
-    );
+    // XXX this isn't right now that I think about it
+    nowText += `\n\n🐘 My latest toot:  [${latestToot.content.replaceAll(
+      /<.+>(.+)<\/.+>/g,
+      "$1"
+    )}](${latestToot.url})`;
 
     // mood?
     // reading
+    return this.responseFromText(nowText);
   }
 }
 
