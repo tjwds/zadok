@@ -61,8 +61,40 @@ class NowCommand extends Command {
       `https://api.whatpulse.org/user.php?user=${config.now.whatpulseUsername}&format=json`
     );
     const whatpulseJson = await whatpulseRes.json();
-    // TODO maybe higher-fidelity data here would be nice.
-    nowText += `\n\n⌨️ I've typed ${whatpulseJson.Keys} keys and clicked ${whatpulseJson.Clicks} times.`;
+
+    const whatpulsePulses = await fetch(
+      `https://api.whatpulse.org/pulses.php?user=${config.now.whatpulseUsername}&format=json`
+    );
+    const whatpulsePulsesJson = await whatpulsePulses.json();
+
+    let last24Hours = { keys: 0, clicks: 0 };
+    let last7Days = { keys: 0, clicks: 0 };
+
+    const twentyFourHoursInMilliseconds = 1000 * 60 * 60 * 24;
+    const sevenDaysInMilliseconds = twentyFourHoursInMilliseconds * 7;
+
+    Object.values(whatpulsePulsesJson).forEach((pulse) => {
+      const pulseTime = new Date(pulse.Timedate + "Z");
+      const timeDistance = now - pulseTime;
+      if (timeDistance < sevenDaysInMilliseconds) {
+        const keys = Number(pulse.Keys);
+        const clicks = Number(pulse.Clicks);
+
+        last7Days.keys += keys;
+        last7Days.clicks += clicks;
+
+        if (timeDistance < twentyFourHoursInMilliseconds) {
+          last24Hours.keys += keys;
+          last24Hours.clicks += clicks;
+        }
+      }
+    });
+
+    nowText += `\n\n⌨️ I've typed ${last24Hours.keys.toLocaleString()} keys and clicked ${last24Hours.clicks.toLocaleString()} times in the last 24 hours.  \nI've typed ${last7Days.keys.toLocaleString()} keys and clicked ${last7Days.clicks.toLocaleString()} times in the last 7 days.  \nI've typed ${Number(
+      whatpulseJson.Keys
+    ).toLocaleString()} keys and clicked ${Number(
+      whatpulseJson.Clicks
+    ).toLocaleString()} times total.`;
 
     const wpRes = await fetch(
       `${config.now.blogUrl}/wp-json/wp/v2/posts?_embed&per_page=10`
