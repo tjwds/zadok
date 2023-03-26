@@ -32,6 +32,15 @@ const config = {
     omglolApiKey: "",
     omglolAccount: "",
   },
+
+  roulette: {
+    example: {
+      half: 4,
+      quarter: 2,
+      eighth: 1,
+      "other eighth": 1,
+    },
+  },
 };
 
 export default config;
