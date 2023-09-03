@@ -1,4 +1,4 @@
-import { task } from "./task.js";
+import { task } from "./taskCommands.js";
 import { habit } from "./habit.js";
 import { linear } from "./linear.js";
 
