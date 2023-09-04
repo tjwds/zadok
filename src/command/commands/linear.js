@@ -11,8 +11,7 @@ const linearClient = new LinearClient({
 
 class LinearCommand extends TodoCommand {
   constructor() {
-    // TODO this is so silly
-    super("linear", "linears");
+    super("linear", "linear issues");
 
     this.help = new HelpEntry("linear", "Manage Linear tasks.").addSubEntry(
       "list (optionally: all|n,n)",
