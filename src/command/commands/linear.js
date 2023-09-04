@@ -27,6 +27,7 @@ class LinearCommand extends TodoCommand {
       created: issue.createdAt,
       done: issue.completedAt || issue.canceledAt,
       due: issue.dueDate ? new Date(issue.dueDate) : undefined,
+      type: 'linear',
     };
   }
 

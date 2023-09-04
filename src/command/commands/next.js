@@ -48,9 +48,12 @@ class NextCommand extends Command {
     super("next");
 
     this.help = new HelpEntry("next", "A queue of tasks that are 'up next' …")
-      .addSubEntry("push <item>", "Push a task to the end of the stack.")
       .addSubEntry(
-        "unshift <item>",
+        "push <optional task type> <item>",
+        "Push a task to the end of the stack."
+      )
+      .addSubEntry(
+        "unshift <optional task type> <item>",
         "Stick a task on the beginning of the stack."
       )
       .addSubEntry("remove <item>", "Remove a specific item from the queue")
@@ -85,24 +88,27 @@ class NextCommand extends Command {
     );
   }
 
-  taskNumberToCommandInstance(taskNumber) {
-    // XXX horrible hack based on my own personal db; fix before really sharing
-    // Number.isInteger:  test for string or NaN
-    return !Number.isInteger(taskNumber)
-      ? linear
-      : taskNumber < 100
-      ? habit
-      : task;
+  taskIdentifierToCommandInstance(type) {
+    if (type === "linear") {
+      return linear;
+    }
+    if (type === "habit") {
+      return habit;
+    }
+
+    // XXX good luck!
+    return task;
   }
 
   async input(input) {
     const prisma = this.instance.source.prisma;
-    let [, command, taskId] = input.words;
+    let [, command, word2, word3] = input.words;
 
     if (!command) {
       command = "list";
     }
 
+    const taskId = word3 || word2;
     const taskNumber = Number(taskId);
     const loggedHabits = (
       await prisma.habitLogEntry.findMany({
@@ -113,20 +119,32 @@ class NextCommand extends Command {
         },
       })
     ).map((loggedHabit) => loggedHabit.habitId);
-    const taskType = this.taskNumberToCommandInstance(taskNumber);
+
+    let taskTypeString = taskId === word3 ? word2 : null;
+    if (!taskTypeString) {
+      if (Number.isInteger(taskNumber)) {
+        // XXX This is a hack, but let's assume that all ids under 20 are
+        //     habits.
+        taskTypeString = taskNumber < 20 ? "habit" : "task";
+      } else {
+        taskTypeString = "linear";
+      }
+    }
+
+    const taskType = this.taskIdentifierToCommandInstance(taskTypeString);
 
     let taskRecord;
 
     // Get the command function
     const commandFunction = commands[command];
-    if (!commandFunction) {
-      return;
-    }
 
     // Check the arity of the function; if it requires a taskId, make sure we
     // have one
     if (commandFunction.length > 1) {
-      if (!taskId || loggedHabits.includes(taskNumber)) {
+      if (
+        !taskId ||
+        (taskTypeString === "habit" && loggedHabits.includes(taskNumber))
+      ) {
         // TODO better error message
         return;
       }
@@ -158,7 +176,13 @@ class NextCommand extends Command {
 
     // XXX optimize this query
     let tasksInQueue = await Promise.all(
-      queue.map((id) => this.taskNumberToCommandInstance(id).findById(id))
+      queue.map((id) => {
+        const [recordIdString, type] = id.split("#");
+        const recordId = Number(recordIdString);
+        return this.taskIdentifierToCommandInstance(type).findById(
+          recordIdString === String(recordId) ? recordId : recordIdString
+        );
+      })
     );
 
     // clean the queue of tasks that are already done
@@ -166,18 +190,23 @@ class NextCommand extends Command {
       await Promise.all(
         tasksInQueue.map(async (task) =>
           // XXX This is absurd.
-          (await this.taskNumberToCommandInstance(task.id).isDone(task))
+          (await this.taskIdentifierToCommandInstance(
+            task.id,
+            task.type
+          ).isDone(task))
             ? null
             : task
         )
       )
     ).filter(Boolean);
 
-    queue = tasksInQueue.map((task) => task.id);
+    queue = tasksInQueue.map((task) => String(task.id) + "#" + task.type);
     // XXX Ugh, this is just a stack of bad hacks.
     queue = commandFunction(
       queue,
-      Number.isNaN(taskNumber) ? taskId : taskNumber
+      String(Number.isNaN(taskNumber) ? taskId : taskNumber) +
+        "#" +
+        taskTypeString
     );
 
     await prisma.next.update({

@@ -15,14 +15,15 @@ class HabitCommand extends TodoCommand {
 
   // TODO delete log entries?
 
-  // TODO for this one, it might be better to just address the habit by
-  // name...
   async findById(id) {
-    return await this.instance.source.prisma.habit.findUnique({
+    const habit = await this.instance.source.prisma.habit.findUnique({
       where: {
         id,
       },
     });
+    habit.type = "habit";
+
+    return habit;
   }
 
   async findAll(done) {
@@ -45,6 +46,7 @@ class HabitCommand extends TodoCommand {
     if (!done) {
       habits = habits.filter((habit) => !loggedHabits.includes(habit.id));
     }
+    habits.forEach((habit) => (habit.type = "habit"));
 
     return habits;
   }
