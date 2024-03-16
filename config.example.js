@@ -41,6 +41,15 @@ const config = {
       "other eighth": 1,
     },
   },
+
+  irc: {
+    host: "",
+    port: 0,
+    nick: "",
+    channel: "#zadok",
+    channelPassword: undefined,
+    yourNick: undefined,
+  },
 };
 
 export default config;

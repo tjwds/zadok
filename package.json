@@ -24,6 +24,7 @@
     "discord.js": "^14.7.1",
     "geoip-lite": "^1.4.7",
     "haversine-distance": "^1.2.1",
+    "irc-framework": "^4.13.1",
     "node-ical": "^0.15.3"
   }
 }
