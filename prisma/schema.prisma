@@ -5,59 +5,58 @@ generator client {
   provider = "prisma-client-js"
 }
 
-// TODO
 datasource db {
-  provider = "sqlite"
-  url      = "file:./zadok.db"
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
 }
 
 // TODO for now, assume single-user
 
 model Task {
-  id          Int        @id @default(autoincrement())
+  id          String     @id @default(cuid()) @map("_id")
   title       String
   // TODO do I care about creation / close dateTimes? probably not…
   done        Boolean    @default(false)
   TimeBlock   TimeBlock? @relation(fields: [timeBlockId], references: [id])
-  timeBlockId Int?
+  timeBlockId String?
   created     DateTime   @default(now())
   type        String     @default("task")
   due         DateTime?
 }
 
 model Habit {
-  id          Int             @id @default(autoincrement())
+  id          String          @id @default(cuid()) @map("_id")
   title       String
   // TODO assuming, for now, that every habit is daily
   active      Boolean         @default(true)
   logEntries  HabitLogEntry[]
   TimeBlock   TimeBlock?      @relation(fields: [timeBlockId], references: [id])
-  timeBlockId Int?
+  timeBlockId String?
 }
 
 model HabitLogEntry {
-  id      Int      @id @default(autoincrement())
+  id      String   @id @default(cuid()) @map("_id")
   time    DateTime @default(now())
   habit   Habit    @relation(fields: [habitId], references: [id])
-  habitId Int
+  habitId String
 }
 
 model Goal {
-  id    Int      @id @default(autoincrement())
+  id    String   @id @default(cuid()) @map("_id")
   time  DateTime @default(now())
   title String
   done  Boolean  @default(false)
 }
 
 model TimeBlock {
-  id     Int     @id @default(autoincrement())
+  id     String  @id @default(cuid()) @map("_id")
   title  String
   tasks  Task[]
   habits Habit[]
 }
 
 model Points {
-  id     Int      @id @default(autoincrement())
+  id     String   @id @default(cuid()) @map("_id")
   reason String
   amount Int
   time   DateTime @default(now())
@@ -65,12 +64,12 @@ model Points {
 
 // Singleton
 model Next {
-  id    Int    @id @default(autoincrement())
+  id    String @id @default(cuid()) @map("_id")
   queue String
 }
 
 model LogEntry {
-  id    Int      @id @default(autoincrement())
+  id    String   @id @default(cuid()) @map("_id")
   time  DateTime @default(now())
   type  String
   value String

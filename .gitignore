@@ -7,3 +7,5 @@ node_modules
 
 zadok.db
 zadok.db-journal
+
+.env
